@@ -46,6 +46,7 @@ export default defineConfig({
     "sort-keys": "off",
     "react/jsx-props-no-spreading": "off",
     curly: "off",
+    "unicorn/no-useless-undefined": "off",
   },
   overrides: [
     {

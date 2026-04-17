@@ -3,7 +3,7 @@ import { ulid } from "ulid";
 import { z } from "zod";
 
 export const tagSchema = z.object({
-  id: z.ulid().default(() => ulid()),
+  id: z.ulid(),
   name: z.string(),
 });
 
@@ -18,5 +18,5 @@ export const tagsCollection = createCollection(
 );
 
 export const createTag = (name: string) => {
-  tagsCollection.insert({ name });
+  tagsCollection.insert({ id: ulid(), name });
 };

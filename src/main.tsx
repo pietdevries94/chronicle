@@ -6,6 +6,10 @@ import "./layers.css";
 import "./reset.css";
 import { routeTree } from "./routeTree.gen";
 
+if (typeof navigator.storage?.persist === "object") {
+  void navigator.storage.persist();
+}
+
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
