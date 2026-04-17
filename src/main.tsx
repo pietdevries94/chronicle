@@ -10,6 +10,7 @@ const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   scrollRestoration: true,
+  basepath: "/chronicle",
 });
 
 // Register things for typesafety
