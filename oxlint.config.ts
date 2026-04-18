@@ -47,6 +47,7 @@ export default defineConfig({
     "react/jsx-props-no-spreading": "off",
     curly: "off",
     "unicorn/no-useless-undefined": "off",
+    "typescript/prefer-readonly-parameter-types": "off",
   },
   overrides: [
     {

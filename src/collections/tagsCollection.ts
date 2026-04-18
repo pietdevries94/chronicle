@@ -13,13 +13,15 @@ export type Tag = z.infer<typeof tagSchema>;
 export const tagsCollection = createCollection(
   localOnlyCollectionOptions({
     schema: tagSchema,
-    id: "ui-state",
+    id: "tags",
     getKey: (item) => item.id,
   }),
 );
 
 export const createTag = (name: string, description = "") => {
-  tagsCollection.insert({ id: ulid(), name, description });
+  const id = ulid();
+  tagsCollection.insert({ id, name, description });
+  return id;
 };
 
 export const updateTagDescription = (id: string, description: string) => {

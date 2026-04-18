@@ -1,10 +1,10 @@
-import type { Tag } from "../../collections/tagsCollection";
+import type { EntryWithTags } from "../templates/Overview";
 import CodeBlock from "../atoms/CodeBlock";
 
 interface EntriesListProps {
-  tags: readonly Tag[];
+  entries: readonly EntryWithTags[];
 }
 
-export default function EntriesList({ tags }: Readonly<EntriesListProps>) {
-  return <CodeBlock code={tags} />;
+export default function EntriesList({ entries }: Readonly<EntriesListProps>) {
+  return <CodeBlock code={entries} />;
 }

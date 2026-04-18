@@ -32,7 +32,6 @@ const api = {
       generator = await pipeline("text-generation", MODEL_ID, {
         dtype: "q4f16",
         device,
-        // oxlint-disable-next-line typescript/prefer-readonly-parameter-types
         progress_callback: (data) => {
           for (const fn of progressListeners) fn(data);
         },

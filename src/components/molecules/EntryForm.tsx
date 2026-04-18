@@ -1,11 +1,11 @@
 import Button from "../atoms/Button";
 import TextInput from "../atoms/TextInput";
 
-interface SentimentFormProps {
+interface EntryFormProps {
   onSubmit: (message: string) => void;
 }
 
-export default function SentimentForm({ onSubmit }: Readonly<SentimentFormProps>) {
+export default function EntryForm({ onSubmit }: Readonly<EntryFormProps>) {
   function submitTag(formData: Readonly<FormData>) {
     const tag = formData.get("message");
     if (typeof tag === "string") {
