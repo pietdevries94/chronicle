@@ -8,6 +8,7 @@ import { createTag, tagsCollection, updateTagDescription } from "../collections/
 import Overview from "../components/templates/Overview";
 import { useAnalyzeMessage } from "../hooks/useAnalyzeMessage";
 import { useLlmStatus } from "../hooks/useLlm";
+import { useRedescribeTag } from "../hooks/useRedescribeTag";
 
 // oxlint-disable-next-line max-statements
 function OverviewPage() {
@@ -47,6 +48,7 @@ function OverviewPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { status } = useLlmStatus();
   const { analyzeMessage } = useAnalyzeMessage();
+  const { redescribeTag } = useRedescribeTag();
 
   const findOrCreateTag = (name: string): string =>
     tagsData.find((t) => t.name.toLowerCase() === name.toLowerCase())?.id ?? createTag(name);
@@ -78,14 +80,40 @@ function OverviewPage() {
     }
   };
 
+  const getOtherEntryContents = (tagId: string, excludeEntryId: string) =>
+    rawEntries
+      .filter((e) =>
+        e.id !== excludeEntryId && entryTags.some((et) => et.entryId === e.id && et.tagId === tagId),
+      )
+      .map((e) => e.content);
+
   const handleAddTag = (entryId: string, tagName: string) => {
     const tagId = findOrCreateTag(tagName);
     const alreadyLinked = entryTags.some(
       (et) => et.entryId === entryId && et.tagId === tagId,
     );
-    if (!alreadyLinked) {
-      linkEntryTags(entryId, tagId, "user");
-    }
+    if (alreadyLinked) return;
+
+    linkEntryTags(entryId, tagId, "user");
+
+    const tag = tagsData.find((t) => t.id === tagId);
+    const entry = rawEntries.find((e) => e.id === entryId);
+    if (!tag || !entry) return;
+
+    redescribeTag(tagId, tag, "added", entry.content, getOtherEntryContents(tagId, entryId));
+  };
+
+  const handleRemoveTag = (entryTagId: string) => {
+    const link = entryTags.find((et) => et.entryTagId === entryTagId);
+    unlinkEntryTag(entryTagId);
+
+    if (!link) return;
+
+    const tag = tagsData.find((t) => t.id === link.tagId);
+    const entry = rawEntries.find((e) => e.id === link.entryId);
+    if (!tag || !entry) return;
+
+    redescribeTag(tag.id, tag, "removed", entry.content, getOtherEntryContents(tag.id, entry.id));
   };
 
   return (
@@ -95,7 +123,7 @@ function OverviewPage() {
       isProcessing={isProcessing}
       modelStatus={status}
       onNewMessage={processMessage}
-      onRemoveTag={unlinkEntryTag}
+      onRemoveTag={handleRemoveTag}
       onAddTag={handleAddTag}
     />
   );

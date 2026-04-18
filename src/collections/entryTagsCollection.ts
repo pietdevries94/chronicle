@@ -2,6 +2,8 @@ import { createCollection, localOnlyCollectionOptions } from "@tanstack/react-db
 import { ulid } from "ulid";
 import { z } from "zod";
 
+import { deleteTag } from "./tagsCollection";
+
 export const entryTagSchema = z.object({
   id: z.ulid(),
   entryId: z.ulid(),
@@ -36,5 +38,13 @@ export const linkEntryTags = (
 };
 
 export const unlinkEntryTag = (id: string) => {
+  const record = entryTagsCollection.state.get(id);
+  if (!record) return;
   entryTagsCollection.delete(id);
+
+  const hasRemaining = [...entryTagsCollection.state.values()].some(
+    (et) => et.tagId === record.tagId,
+  );
+  if (hasRemaining) return;
+  deleteTag(record.tagId);
 };

@@ -24,6 +24,10 @@ export const createTag = (name: string, description = "") => {
   return id;
 };
 
+export const deleteTag = (id: string) => {
+  tagsCollection.delete(id);
+};
+
 export const updateTagDescription = (id: string, description: string) => {
   tagsCollection.update(id, (tag) => {
     tag.description = description;
