@@ -12,6 +12,12 @@ let generator: TextGenerationPipeline | undefined = undefined;
 let loading: Promise<void> | false = false;
 const progressListeners = new Set<(data: unknown) => void>();
 
+interface GenerateOptions {
+  temperature?: number;
+  max_new_tokens?: number;
+  do_sample?: boolean;
+}
+
 const api = {
   load(onProgress?: (data: unknown) => void) {
     if (generator) return Promise.resolve();
@@ -43,7 +49,7 @@ const api = {
     return loading;
   },
 
-  async generate(message: string) {
+  async generate(message: string, options?: Readonly<GenerateOptions>) {
     if (!generator) throw new Error("Model not loaded");
 
     const streamer = new TextStreamer(generator.tokenizer, {
@@ -58,6 +64,7 @@ const api = {
       do_sample: true,
       return_full_text: false,
       streamer,
+      ...options,
     });
 
     return output[0].generated_text;

@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { llm } from "../lib/llm";
 
-export function useLlm() {
+export function useLlmStatus() {
   const [status, setStatus] = useState<"loading" | "ready">("loading");
   const [progress, setProgress] = useState("");
   const started = useRef(false);
@@ -25,19 +25,8 @@ export function useLlm() {
     })();
   }, []);
 
-  const generate = useCallback(
-    (message: string) => {
-      if (status !== "ready") {
-        throw new Error("Model not loaded");
-      }
-      return llm.generate(message);
-    },
-    [status],
-  );
-
   return {
     progress,
     status,
-    generate,
   };
 }

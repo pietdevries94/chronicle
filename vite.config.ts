@@ -32,7 +32,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,wasm}"],
+        globPatterns: ["**/*.{js,css,html,svg}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/huggingface\.co\/.*/i,
