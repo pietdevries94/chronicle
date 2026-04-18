@@ -1,5 +1,5 @@
-import type { EntryWithTags } from "../templates/Overview";
 import CodeBlock from "../atoms/CodeBlock";
+import type { EntryWithTags } from "../templates/Overview";
 
 interface EntriesListProps {
   entries: readonly EntryWithTags[];

@@ -13,13 +13,14 @@ function OverviewPage() {
   const { data: tagsData } = useLiveQuery((q) => q.from({ tags: tagsCollection }));
   const { data: rawEntries } = useLiveQuery((q) => q.from({ entries: entriesCollection }));
   const { data: entryTags } = useLiveQuery((q) =>
-    q.from({ et: entryTagsCollection })
-     .join({ tags: tagsCollection }, ({ et, tags }) => eq(et.tagId, tags.id))
-     .select(({ et, tags }) => ({
-       entryId: et.entryId,
-       tagId: tags.id,
-       tagName: tags.name,
-     }))
+    q
+      .from({ et: entryTagsCollection })
+      .join({ tags: tagsCollection }, ({ et, tags }) => eq(et.tagId, tags.id))
+      .select(({ et, tags }) => ({
+        entryId: et.entryId,
+        tagId: tags.id,
+        tagName: tags.name,
+      })),
   );
 
   const entriesData = useMemo(() => {
@@ -52,7 +53,7 @@ function OverviewPage() {
 
     const createdIds = res.possibleNewTags.map((tag) => createTag(tag.name, tag.description));
 
-    createEntry(msg, Temporal.Now.instant(), [...foundIds, ...createdIds]);
+    createEntry({ content: msg, tagIds: [...foundIds, ...createdIds], sentiment: res.sentiment });
   };
 
   return (

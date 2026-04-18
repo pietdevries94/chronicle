@@ -1,12 +1,14 @@
 import { createCollection, localOnlyCollectionOptions } from "@tanstack/react-db";
 import { ulid } from "ulid";
 import { z } from "zod";
+
 import { linkEntryTags } from "./entryTagsCollection";
 
 export const entrySchema = z.object({
   id: z.ulid(),
   content: z.string(),
   date: z.date(),
+  sentiment: z.number().min(0).max(1),
 });
 
 export type Entry = z.infer<typeof entrySchema>;
@@ -19,17 +21,18 @@ export const entriesCollection = createCollection(
   }),
 );
 
-export const createEntry = (
-  content: string,
-  date: Readonly<Temporal.Instant>,
-  tagIds: readonly string[],
-) => {
+export const createEntry = (data: {
+  content: string;
+  tagIds: readonly string[];
+  sentiment: number;
+}) => {
   const id = ulid();
   entriesCollection.insert({
     id,
-    content,
-    date: new Date(date.epochMilliseconds),
+    content: data.content,
+    date: new Date(),
+    sentiment: data.sentiment,
   });
-  linkEntryTags(id, tagIds);
+  linkEntryTags(id, data.tagIds, "ai");
   return id;
 };

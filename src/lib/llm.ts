@@ -3,7 +3,6 @@ import type { z } from "zod";
 
 import type { LLMWorkerApi } from "../workers/llm.worker";
 
-// oxlint-disable-next-line typescript/prefer-readonly-parameter-types
 function toStructuredMessage(schema: z.ZodType, userMessage: string, context?: string) {
   const jsonSchema = JSON.stringify(schema.toJSONSchema());
   const contextPart = typeof context === "string" ? `Context:\n${context}\n\n` : "";
@@ -26,7 +25,6 @@ function createLLM() {
 
   // oxlint-disable-next-line max-statements
   async function structuredGenerate<T>(
-    // oxlint-disable-next-line typescript/prefer-readonly-parameter-types
     schema: z.ZodType<T>,
     userMessage: string,
     {
