@@ -13,6 +13,16 @@ export const entrySchema = z.object({
 
 export type Entry = z.infer<typeof entrySchema>;
 
+export interface EntryWithTags extends Entry {
+  tags: readonly {
+    entryTagId: string;
+    entryId: string;
+    tagId: string;
+    tagName: string;
+    taggedBy: "user" | "ai";
+  }[];
+}
+
 export const entriesCollection = createCollection(
   localOnlyCollectionOptions({
     schema: entrySchema,

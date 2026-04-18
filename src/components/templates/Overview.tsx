@@ -1,33 +1,42 @@
-import type { Entry } from "../../collections/entriesCollection";
+import type { EntryWithTags } from "../../collections/entriesCollection";
 import type { Tag } from "../../collections/tagsCollection";
 import EntryForm from "../molecules/EntryForm";
-import TagForm from "../molecules/TagForm";
 import EntriesList from "../organisms/EntriesList";
-import TagsList from "../organisms/TagsList";
+import ModelStatusBar from "../organisms/ModelStatusBar";
 
 interface OverviewProps {
-  tags: readonly Tag[];
+  allTags: readonly Tag[];
   entries: readonly EntryWithTags[];
-  onNewTag: (tag: string) => void;
-  onNewMessage: (message: string) => void;
-}
-
-export interface EntryWithTags extends Entry {
-  tags: readonly { entryId: string; tagId?: string; tagName?: string }[];
+  isProcessing: boolean;
+  modelStatus: "loading" | "ready";
+  onNewMessage: (message: string) => Promise<void>;
+  onRemoveTag: (entryTagId: string) => void;
+  onAddTag: (entryId: string, tagName: string) => void;
 }
 
 export default function Overview({
-  onNewTag,
-  onNewMessage,
-  tags,
+  allTags,
   entries,
+  isProcessing,
+  modelStatus,
+  onNewMessage,
+  onRemoveTag,
+  onAddTag,
 }: Readonly<OverviewProps>) {
   return (
     <>
-      <EntryForm onSubmit={onNewMessage} />
-      <EntriesList entries={entries} />
-      <TagForm onSubmit={onNewTag} />
-      <TagsList tags={tags} />
+      <EntryForm
+        isLocked={isProcessing}
+        isModelReady={modelStatus === "ready"}
+        onSubmit={onNewMessage}
+      />
+      <EntriesList
+        entries={entries}
+        allTags={allTags}
+        onRemoveTag={onRemoveTag}
+        onAddTag={onAddTag}
+      />
+      <ModelStatusBar status={modelStatus} />
     </>
   );
 }
