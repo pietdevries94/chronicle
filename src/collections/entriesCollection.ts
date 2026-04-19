@@ -1,8 +1,10 @@
-import { createCollection, localOnlyCollectionOptions } from "@tanstack/react-db";
+import { persistedCollectionOptions } from "@tanstack/browser-db-sqlite-persistence";
+import { createCollection } from "@tanstack/react-db";
 import { ulid } from "ulid";
 import { z } from "zod";
 
 import { linkEntryTags } from "./entryTagsCollection";
+import { persistence } from "./persistence";
 
 export const entrySchema = z.object({
   id: z.ulid(),
@@ -23,13 +25,14 @@ export interface EntryWithTags extends Entry {
   }[];
 }
 
-export const entriesCollection = createCollection(
-  localOnlyCollectionOptions({
-    schema: entrySchema,
+export const entriesCollection = createCollection({
+  ...persistedCollectionOptions<Entry, string>({
     id: "entries",
     getKey: (item) => item.id,
+    persistence,
   }),
-);
+  schema: entrySchema,
+});
 
 export const createEntry = (data: {
   content: string;

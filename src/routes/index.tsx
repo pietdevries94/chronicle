@@ -48,7 +48,7 @@ function OverviewPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { status } = useLlmStatus();
   const { analyzeMessage } = useAnalyzeMessage();
-  const { redescribeTag } = useRedescribeTag();
+  const { redescribeTag, cancelRedescription } = useRedescribeTag();
 
   const findOrCreateTag = (name: string): string =>
     tagsData.find((t) => t.name.toLowerCase() === name.toLowerCase())?.id ?? createTag(name);
@@ -100,11 +100,19 @@ function OverviewPage() {
     const entry = rawEntries.find((e) => e.id === entryId);
     if (!tag || !entry) return;
 
-    redescribeTag(tagId, tag, "added", entry.content, getOtherEntryContents(tagId, entryId));
+    void redescribeTag({
+      tagId,
+      tag,
+      action: "added",
+      entryContent: entry.content,
+      otherEntries: getOtherEntryContents(tagId, entryId),
+    });
   };
 
   const handleRemoveTag = (entryTagId: string) => {
     const link = entryTags.find((et) => et.entryTagId === entryTagId);
+
+    cancelRedescription(link?.tagId ?? "");
     unlinkEntryTag(entryTagId);
 
     if (!link) return;
@@ -113,7 +121,13 @@ function OverviewPage() {
     const entry = rawEntries.find((e) => e.id === link.entryId);
     if (!tag || !entry) return;
 
-    redescribeTag(tag.id, tag, "removed", entry.content, getOtherEntryContents(tag.id, entry.id));
+    void redescribeTag({
+      tagId: tag.id,
+      tag,
+      action: "removed",
+      entryContent: entry.content,
+      otherEntries: getOtherEntryContents(tag.id, entry.id),
+    });
   };
 
   return (

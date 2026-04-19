@@ -14,6 +14,9 @@ importers:
       '@huggingface/transformers':
         specifier: ^4.1.0
         version: 4.1.0
+      '@tanstack/browser-db-sqlite-persistence':
+        specifier: ^0.1.9
+        version: 0.1.9(@journeyapps/wa-sqlite@1.6.0)(typescript@6.0.2)
       '@tanstack/react-db':
         specifier: ^0.1.83
         version: 0.1.83(react@19.2.5)(typescript@6.0.2)
@@ -1194,6 +1197,9 @@ packages:
     resolution: {integrity: sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg==}
     engines: {node: '>=18'}
 
+  '@journeyapps/wa-sqlite@1.6.0':
+    resolution: {integrity: sha512-ZhHCTQiGGGoJz6LJPTH880BMO0kR0uVepoNTGCUpl65ZQ82r1RUHXGUpGWY3yndsjWKNveOxsqCCAgvI+TTu2w==}
+
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
@@ -1677,8 +1683,19 @@ packages:
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
 
+  '@tanstack/browser-db-sqlite-persistence@0.1.9':
+    resolution: {integrity: sha512-HVcrHGkIw62nT8dTnlblUN9Zn5CewIWXNzPsQaMqDy7qmnvkgE58xJeRInYr3HKbmKMm/E/mlFBkZygRkPr0/w==}
+    peerDependencies:
+      '@journeyapps/wa-sqlite': ^1.4.1
+      typescript: '>=4.7'
+
   '@tanstack/db-ivm@0.1.18':
     resolution: {integrity: sha512-+pZJiRKdoKRM5Epq9T7otD9ZJl82pRFauo7LKuJGrarjVKQ7r+QQlPe3kGdN9LEKSnuNGIWjX9OOY4M8kH4eLw==}
+    peerDependencies:
+      typescript: '>=4.7'
+
+  '@tanstack/db-sqlite-persistence-core@0.1.9':
+    resolution: {integrity: sha512-Ju4HcBzaSXTaPJFMRWNjiyXRfCmom0AXBr/22sqLoQWY1TjFM/UTbSSTQgsrExkNuFDVFiV8EDpCt8WUBFiKcQ==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -4562,6 +4579,8 @@ snapshots:
 
   '@isaacs/cliui@9.0.0': {}
 
+  '@journeyapps/wa-sqlite@1.6.0': {}
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -4871,10 +4890,22 @@ snapshots:
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.12
 
+  '@tanstack/browser-db-sqlite-persistence@0.1.9(@journeyapps/wa-sqlite@1.6.0)(typescript@6.0.2)':
+    dependencies:
+      '@journeyapps/wa-sqlite': 1.6.0
+      '@tanstack/db-sqlite-persistence-core': 0.1.9(typescript@6.0.2)
+      typescript: 6.0.2
+
   '@tanstack/db-ivm@0.1.18(typescript@6.0.2)':
     dependencies:
       fractional-indexing: 3.2.0
       sorted-btree: 1.8.1
+      typescript: 6.0.2
+
+  '@tanstack/db-sqlite-persistence-core@0.1.9(typescript@6.0.2)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@tanstack/db': 0.6.5(typescript@6.0.2)
       typescript: 6.0.2
 
   '@tanstack/db@0.6.5(typescript@6.0.2)':
