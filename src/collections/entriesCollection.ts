@@ -4,17 +4,19 @@ import { ulid } from "ulid";
 import { z } from "zod";
 
 import type { EntryTag } from "./entryTagsCollection";
-import { entryTagsCollection, linkEntryTags, unlinkEntryTag } from "./entryTagsCollection";
+import { entryTagsCollection, unlinkEntryTag } from "./entryTagsCollection";
 import { persistence } from "./persistence";
 
 export const entrySchema = z.object({
   id: z.ulid(),
   content: z.string(),
   date: z.date(),
-  sentiment: z.number().min(0).max(1),
+  sentiment: z.number().min(0).max(1).optional(),
+  analysisStatus: z.enum(["pending", "analyzing", "done", "failed"]),
 });
 
 export type Entry = z.infer<typeof entrySchema>;
+export type AnalysisStatus = Entry["analysisStatus"];
 
 export interface EntryWithTags extends Entry {
   tags: readonly {
@@ -35,20 +37,30 @@ export const entriesCollection = createCollection({
   schema: entrySchema,
 });
 
-export const createEntry = (data: {
-  content: string;
-  tagIds: readonly string[];
-  sentiment: number;
-}) => {
+export const createEntry = (data: { content: string }) => {
   const id = ulid();
   entriesCollection.insert({
     id,
     content: data.content,
     date: new Date(),
-    sentiment: data.sentiment,
+    analysisStatus: "pending",
   });
-  linkEntryTags(id, data.tagIds, "ai");
   return id;
+};
+
+export const setEntryStatus = (id: string, status: AnalysisStatus) => {
+  if (!entriesCollection.state.get(id)) return;
+  entriesCollection.update(id, (entry) => {
+    entry.analysisStatus = status;
+  });
+};
+
+export const completeEntryAnalysis = (id: string, sentiment: number) => {
+  if (!entriesCollection.state.get(id)) return;
+  entriesCollection.update(id, (entry) => {
+    entry.sentiment = sentiment;
+    entry.analysisStatus = "done";
+  });
 };
 
 export const deleteEntry = (id: string, onLinkFound?: (link: EntryTag) => void) => {

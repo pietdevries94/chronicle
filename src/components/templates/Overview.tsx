@@ -18,25 +18,25 @@ import {
 interface OverviewProps {
   allTags: readonly Tag[];
   entries: readonly EntryWithTags[];
-  isProcessing: boolean;
   modelStatus: "loading" | "ready" | "error";
   modelProgress: number | undefined;
-  onNewMessage: (message: string) => Promise<void>;
+  onNewMessage: (message: string) => void;
   onRemoveTag: (entryTagId: string) => void;
   onAddTag: (entryId: string, tagName: string) => void;
   onDeleteEntry: (entryId: string) => void;
+  onRetryAnalysis: (entryId: string) => void;
 }
 
 export default function Overview({
   allTags,
   entries,
-  isProcessing,
   modelStatus,
   modelProgress,
   onNewMessage,
   onRemoveTag,
   onAddTag,
   onDeleteEntry,
+  onRetryAnalysis,
 }: Readonly<OverviewProps>) {
   const today = new Date();
 
@@ -48,19 +48,15 @@ export default function Overview({
             <p className={dateLine}>{formatHeaderDate(today)}</p>
             <h1 className={title}>what happened today?</h1>
             <p className={subtitle}>write freely. the robots will sort it out later.</p>
-            <EntryForm
-              isLocked={isProcessing}
-              isModelReady={modelStatus === "ready"}
-              onSubmit={onNewMessage}
-            />
+            <EntryForm onSubmit={onNewMessage} />
           </div>
           <EntriesList
             entries={entries}
             allTags={allTags}
-            isProcessing={isProcessing}
             onRemoveTag={onRemoveTag}
             onAddTag={onAddTag}
             onDeleteEntry={onDeleteEntry}
+            onRetryAnalysis={onRetryAnalysis}
           />
         </div>
       </div>

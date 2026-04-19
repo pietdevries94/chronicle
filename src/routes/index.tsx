@@ -8,13 +8,8 @@ import { useLlmStatus } from "../hooks/useLlm";
 function OverviewPage() {
   const { tagsData, rawEntries, entryTags, entriesData } = useEntriesData();
   const { status, progress } = useLlmStatus();
-  const {
-    processMessage,
-    handleAddTag,
-    handleRemoveTag,
-    handleDeleteEntry,
-    handleRetryAnalysis,
-  } = useEntryActions({ tagsData, rawEntries, entryTags });
+  const { processMessage, handleAddTag, handleRemoveTag, handleDeleteEntry, handleRetryAnalysis } =
+    useEntryActions({ tagsData, rawEntries, entryTags });
 
   return (
     <Overview

@@ -3,6 +3,7 @@ import type { Tag } from "../../collections/tagsCollection";
 import { formatEntryDate } from "../../lib/date";
 import type { SentimentVariant } from "../../lib/sentiment";
 import { getSentimentVariant } from "../../lib/sentiment";
+import AnalysisStatusBadge from "../atoms/AnalysisStatusBadge";
 import IconButton from "../atoms/IconButton";
 import SentimentBadge from "../atoms/SentimentBadge";
 import TagPill from "../atoms/TagPill";
@@ -37,6 +38,7 @@ interface EntryCardProps {
   onRemoveTag: (entryTagId: string) => void;
   onAddTag: (entryId: string, tagName: string) => void;
   onDelete: (entryId: string) => void;
+  onRetryAnalysis: (entryId: string) => void;
 }
 
 export default function EntryCard({
@@ -45,14 +47,26 @@ export default function EntryCard({
   onRemoveTag,
   onAddTag,
   onDelete,
+  onRetryAnalysis,
 }: Readonly<EntryCardProps>) {
-  const variant = getSentimentVariant(entry.sentiment);
+  const isDone = entry.analysisStatus === "done";
+  const sentiment = entry.sentiment ?? 0.5;
+  const variant = isDone ? getSentimentVariant(sentiment) : "default";
   const isDark = variant === "dark";
 
   return (
     <div className={CARD_CLASS[variant]}>
       <div className={topRow}>
-        <SentimentBadge sentiment={entry.sentiment} />
+        {entry.analysisStatus === "done" ? (
+          <SentimentBadge sentiment={sentiment} />
+        ) : (
+          <AnalysisStatusBadge
+            status={entry.analysisStatus}
+            onRetry={() => {
+              onRetryAnalysis(entry.id);
+            }}
+          />
+        )}
         <IconButton
           variant={isDark ? "roundInverse" : "round"}
           label="Delete entry"

@@ -1,11 +1,10 @@
-import { useState } from "react";
-
 import type { Entry } from "../collections/entriesCollection";
 import { createEntry, deleteEntry } from "../collections/entriesCollection";
 import { linkEntryTags, unlinkEntryTag } from "../collections/entryTagsCollection";
 import type { Tag } from "../collections/tagsCollection";
-import { createTag, updateTagDescription } from "../collections/tagsCollection";
-import { useAnalyzeMessage } from "./useAnalyzeMessage";
+import { createTag } from "../collections/tagsCollection";
+import { findTagByName } from "../lib/tags";
+import { useAnalysisQueue } from "./useAnalysisQueue";
 import type { EntryTagRow } from "./useEntriesData";
 import { useRedescribeTag } from "./useRedescribeTag";
 
@@ -15,15 +14,9 @@ interface UseEntryActionsArgs {
   entryTags: readonly EntryTagRow[];
 }
 
-function findTagByName(tags: readonly Tag[], name: string): Tag | undefined {
-  const lower = name.toLowerCase();
-  return tags.find((t) => t.name.toLowerCase() === lower);
-}
-
 export function useEntryActions({ tagsData, rawEntries, entryTags }: UseEntryActionsArgs) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { analyzeMessage } = useAnalyzeMessage();
   const { redescribeTag, cancelRedescription } = useRedescribeTag();
+  const { enqueue, retry } = useAnalysisQueue();
 
   const findOrCreateTag = (name: string): string =>
     findTagByName(tagsData, name)?.id ?? createTag(name);
@@ -37,29 +30,13 @@ export function useEntryActions({ tagsData, rawEntries, entryTags }: UseEntryAct
       )
       .map((e) => e.content);
 
-  const processMessage = async (msg: string) => {
-    setIsProcessing(true);
-    try {
-      const res = await analyzeMessage(msg, tagsData);
+  const processMessage = (msg: string) => {
+    const id = createEntry({ content: msg });
+    enqueue(id);
+  };
 
-      res.possibleTagUpdates.forEach((tag) => {
-        const existingTag = findTagByName(tagsData, tag.name);
-        if (existingTag) {
-          updateTagDescription(existingTag.id, tag.newDescription);
-        }
-      });
-
-      const createdIds = res.possibleNewTags.map((tag) => createTag(tag.name, tag.description));
-      const existingTagIds = res.relevantExistingTags.map((name) => findOrCreateTag(name));
-
-      createEntry({
-        content: msg,
-        tagIds: [...existingTagIds, ...createdIds],
-        sentiment: res.sentiment,
-      });
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleRetryAnalysis = (entryId: string) => {
+    retry(entryId);
   };
 
   const handleAddTag = (entryId: string, tagName: string) => {
@@ -112,10 +89,10 @@ export function useEntryActions({ tagsData, rawEntries, entryTags }: UseEntryAct
   };
 
   return {
-    isProcessing,
     processMessage,
     handleAddTag,
     handleRemoveTag,
     handleDeleteEntry,
+    handleRetryAnalysis,
   };
 }

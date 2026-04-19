@@ -6,27 +6,19 @@ import Textarea from "../atoms/Textarea";
 import { card, footer, submitBtn, textarea } from "./entryForm.css";
 
 interface EntryFormProps {
-  isLocked: boolean;
-  isModelReady: boolean;
-  onSubmit: (message: string) => Promise<void>;
+  onSubmit: (message: string) => void;
 }
 
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
-export default function EntryForm({ isLocked, isModelReady, onSubmit }: Readonly<EntryFormProps>) {
+export default function EntryForm({ onSubmit }: Readonly<EntryFormProps>) {
   const [value, setValue] = useState("");
 
   const handleSubmit: FormSubmitHandler = (event) => {
     event.preventDefault();
-    if (isLocked || !value.trim()) return;
-    void (async () => {
-      try {
-        await onSubmit(value);
-        setValue("");
-      } catch (error) {
-        console.error("Failed to process message:", error);
-      }
-    })();
+    if (!value.trim()) return;
+    onSubmit(value);
+    setValue("");
   };
 
   return (
@@ -39,16 +31,11 @@ export default function EntryForm({ isLocked, isModelReady, onSubmit }: Readonly
         onChange={(e) => {
           setValue(e.target.value);
         }}
-        disabled={isLocked}
         rows={4}
       />
       <div className={footer}>
-        <button
-          type="submit"
-          className={submitBtn}
-          disabled={isLocked || !isModelReady || !value.trim()}
-        >
-          {isLocked ? "processing…" : "submit"}
+        <button type="submit" className={submitBtn} disabled={!value.trim()}>
+          submit
         </button>
       </div>
     </form>
