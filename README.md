@@ -1,75 +1,46 @@
-# React + TypeScript + Vite
+<p align="center">
+  <img src="public/favicon.svg" alt="chronicle logo" width="96" height="96" />
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 align="center">chronicle</h1>
 
-Currently, two official plugins are available:
+<p align="center">
+  A private, local-first journal. Write freely. The robots sort it out later.
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![chronicle screenshot](docs/screenshot.png)
 
-## React Compiler
+## About
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Chronicle is a journaling app that runs entirely in your browser. Jot down what happened today and an on-device LLM analyzes sentiment and suggests tags — nothing leaves your machine.
 
-Note: This will impact Vite dev & build performances.
+- Local-first storage via TanStack DB with SQLite persistence (OPFS)
+- On-device inference with [🤗 Transformers.js](https://huggingface.co/docs/transformers.js) running Gemma in a `SharedWorker`
+- WebGPU when available, WASM fallback
+- Installable PWA
+- React 19 + React Compiler, TanStack Router, Vanilla Extract, Base UI
 
-## Expanding the ESLint configuration
+## Running locally
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Requires Node 20+ and [pnpm](https://pnpm.io/).
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```sh
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL Vite prints (default `http://localhost:5173`). First entry triggers a model download — it caches after that.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+## Scripts
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+| Command        | What                                |
+| -------------- | ----------------------------------- |
+| `pnpm dev`     | Start Vite dev server               |
+| `pnpm build`   | Type-check and build for production |
+| `pnpm preview` | Serve the production build locally  |
+| `pnpm lint`    | Run oxlint                          |
+| `pnpm fmt`     | Run oxfmt                           |
+
+## Browser requirements
+
+For best performance, use a browser with WebGPU (recent Chrome/Edge). Firefox and Safari fall back to WASM, which is slower but works.
