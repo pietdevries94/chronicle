@@ -17,7 +17,7 @@
 import { globalStyle } from "@vanilla-extract/css";
 
 // Import first — establishes layer declaration order
-import { reset } from "./layers.css";
+import { reset } from "./styles/layers.css";
 
 // ─── Document ────────────────────────────────────────────────────
 

@@ -71,8 +71,9 @@ async function analyzeWithTags(
   const tagNamesSet = new Set(tagNames);
   const relevantExistingTags = [...result.relevantExistingTags];
   const possibleNewTags = result.possibleNewTags.filter((tag) => {
-    if (tagNamesSet.has(tag.name.toLowerCase())) {
-      relevantExistingTags.push(tag.name);
+    const normalized = tag.name.trim().toLowerCase();
+    if (tagNamesSet.has(normalized)) {
+      relevantExistingTags.push(normalized);
       return false;
     }
     return true;

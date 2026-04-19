@@ -3,7 +3,8 @@ import { createCollection } from "@tanstack/react-db";
 import { ulid } from "ulid";
 import { z } from "zod";
 
-import { linkEntryTags } from "./entryTagsCollection";
+import type { EntryTag } from "./entryTagsCollection";
+import { entryTagsCollection, linkEntryTags, unlinkEntryTag } from "./entryTagsCollection";
 import { persistence } from "./persistence";
 
 export const entrySchema = z.object({
@@ -48,4 +49,13 @@ export const createEntry = (data: {
   });
   linkEntryTags(id, data.tagIds, "ai");
   return id;
+};
+
+export const deleteEntry = (id: string, onLinkFound?: (link: EntryTag) => void) => {
+  const links = [...entryTagsCollection.state.values()].filter((et) => et.entryId === id);
+  for (const link of links) {
+    onLinkFound?.(link);
+    unlinkEntryTag(link.id);
+  }
+  entriesCollection.delete(id);
 };

@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { Combobox } from "@base-ui/react/combobox";
+import { useState } from "react";
 
 import type { Tag } from "../../collections/tagsCollection";
+
+import { createOption, input, option, popup } from "./tagCombobox.css";
 
 interface TagComboboxProps {
   allTags: readonly Tag[];
@@ -45,13 +47,17 @@ export default function TagCombobox({
       }}
       items={items}
     >
-      <Combobox.Input placeholder="Add tag..." />
+      <Combobox.Input className={input} placeholder="+ tag" />
       <Combobox.Portal>
         <Combobox.Positioner>
-          <Combobox.Popup>
+          <Combobox.Popup className={popup}>
             <Combobox.List>
               {(item: string) => (
-                <Combobox.Item key={item} value={item}>
+                <Combobox.Item
+                  key={item}
+                  value={item}
+                  className={availableNames.includes(item) ? option : createOption}
+                >
                   {availableNames.includes(item) ? item : `Create "${item}"`}
                 </Combobox.Item>
               )}

@@ -2,11 +2,16 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import "./layers.css";
+import "./styles/layers.css";
 import "./reset.css";
+import "./styles/globals.css";
 import { routeTree } from "./routeTree.gen";
 
-if (typeof navigator.storage?.persist === "object") {
+import { lightTheme } from "./styles/themes/light.css";
+
+document.documentElement.classList.add(lightTheme);
+
+if (typeof navigator.storage?.persist === "function") {
   void navigator.storage.persist();
 }
 

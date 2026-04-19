@@ -1,23 +1,29 @@
-// oxlint-disable unicorn/no-null -- base-ui Progress requires null for indeterminate state
-import { Progress } from "@base-ui/react/progress";
+import ModelError from "../molecules/ModelError";
+import ModelLoading from "../molecules/ModelLoading";
+import ModelReady from "../molecules/ModelReady";
+
+import { bar } from "./modelStatusBar.css";
 
 interface ModelStatusBarProps {
-  status: "loading" | "ready";
+  status: "loading" | "ready" | "error";
+  progress?: number;
+  onRetry?: () => void;
 }
 
-export default function ModelStatusBar({ status }: Readonly<ModelStatusBarProps>) {
+const defaultRetry = () => {
+  globalThis.location.reload();
+};
+
+export default function ModelStatusBar({
+  status,
+  progress,
+  onRetry,
+}: Readonly<ModelStatusBarProps>) {
   return (
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0 }}>
-      {status === "loading" ? (
-        <Progress.Root value={null}>
-          <Progress.Track>
-            <Progress.Indicator />
-          </Progress.Track>
-          Loading model…
-        </Progress.Root>
-      ) : (
-        "✓ Model ready"
-      )}
+    <div className={bar}>
+      {status === "ready" && <ModelReady />}
+      {status === "loading" && <ModelLoading progress={progress} />}
+      {status === "error" && <ModelError onRetry={onRetry ?? defaultRetry} />}
     </div>
   );
 }

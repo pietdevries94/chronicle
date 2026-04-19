@@ -1,8 +1,9 @@
-import type { SubmitEvent } from "react";
 import { useState } from "react";
+import type { ComponentProps } from "react";
 
-import Button from "../atoms/Button";
 import Textarea from "../atoms/Textarea";
+
+import { card, footer, submitBtn, textarea } from "./entryForm.css";
 
 interface EntryFormProps {
   isLocked: boolean;
@@ -10,14 +11,12 @@ interface EntryFormProps {
   onSubmit: (message: string) => Promise<void>;
 }
 
-export default function EntryForm({
-  isLocked,
-  isModelReady,
-  onSubmit,
-}: Readonly<EntryFormProps>) {
+type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
+
+export default function EntryForm({ isLocked, isModelReady, onSubmit }: Readonly<EntryFormProps>) {
   const [value, setValue] = useState("");
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit: FormSubmitHandler = (event) => {
     event.preventDefault();
     if (isLocked || !value.trim()) return;
     void (async () => {
@@ -31,10 +30,11 @@ export default function EntryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className={card} onSubmit={handleSubmit}>
       <Textarea
         name="message"
-        placeholder="Write your thoughts..."
+        placeholder="write your thoughts…"
+        className={textarea}
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
@@ -42,12 +42,15 @@ export default function EntryForm({
         disabled={isLocked}
         rows={4}
       />
-      <Button
-        type="submit"
-        disabled={isLocked || !isModelReady || !value.trim()}
-      >
-        {isLocked ? "Processing..." : "Submit"}
-      </Button>
+      <div className={footer}>
+        <button
+          type="submit"
+          className={submitBtn}
+          disabled={isLocked || !isModelReady || !value.trim()}
+        >
+          {isLocked ? "processing…" : "submit"}
+        </button>
+      </div>
     </form>
   );
 }

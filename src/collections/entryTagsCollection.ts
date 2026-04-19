@@ -30,7 +30,13 @@ export const linkEntryTags = (
   taggedBy: "user" | "ai",
 ) => {
   const ids = typeof tagIds === "string" ? [tagIds] : tagIds;
-  for (const tagId of ids) {
+  const existing = new Set(
+    [...entryTagsCollection.state.values()]
+      .filter((et) => et.entryId === entryId)
+      .map((et) => et.tagId),
+  );
+  const newIds = ids.filter((tagId) => !existing.has(tagId));
+  for (const tagId of newIds) {
     entryTagsCollection.insert({
       id: ulid(),
       entryId,

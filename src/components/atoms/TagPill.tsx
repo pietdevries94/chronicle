@@ -1,4 +1,6 @@
-import Button from "./Button";
+import IconButton from "./IconButton";
+
+import { chipAuto, chipUser } from "./tagPill.css";
 
 interface TagPillProps {
   label: string;
@@ -7,13 +9,13 @@ interface TagPillProps {
 }
 
 export default function TagPill({ label, taggedBy, onRemove }: Readonly<TagPillProps>) {
-  const emoji = taggedBy === "ai" ? "🤖" : "👤";
+  const chipClass = taggedBy === "ai" ? chipAuto : chipUser;
   return (
-    <span>
-      {emoji} {label}{" "}
-      <Button type="button" onClick={onRemove}>
-        ✕
-      </Button>
+    <span className={chipClass}>
+      <span>{label}</span>
+      <IconButton variant="bare" label={`Remove tag ${label}`} onClick={onRemove}>
+        ×
+      </IconButton>
     </span>
   );
 }
