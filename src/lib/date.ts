@@ -2,6 +2,8 @@ const DAYS_SHORT = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 const DAYS_LONG = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
+type CardVariant = "default" | "warm" | "amber" | "gold" | "dark";
+
 function getTimeOfDay(hour: number): string {
   if (hour < 6) return "late night";
   if (hour < 12) return "morning";
@@ -9,6 +11,16 @@ function getTimeOfDay(hour: number): string {
   if (hour < 18) return "late afternoon";
   if (hour < 21) return "evening";
   return "night";
+}
+
+function getTimeOfDayVariant(date: Date): CardVariant {
+  const hour = date.getHours();
+  if (hour < 6) return "dark";
+  if (hour < 12) return "warm";
+  if (hour < 15) return "default";
+  if (hour < 18) return "gold";
+  if (hour < 21) return "amber";
+  return "dark";
 }
 
 function formatEntryDate(d: Date): string {
@@ -30,4 +42,5 @@ function formatHeaderDate(date: Date): string {
   return `${dayName}, ${d} ${month} ${year} — ${timeOfDay}`;
 }
 
-export { formatEntryDate, formatHeaderDate };
+export { formatEntryDate, formatHeaderDate, getTimeOfDayVariant };
+export type { CardVariant };

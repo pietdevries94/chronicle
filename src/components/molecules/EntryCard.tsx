@@ -1,8 +1,7 @@
 import type { EntryWithTags } from "../../collections/entriesCollection";
 import type { Tag } from "../../collections/tagsCollection";
-import { formatEntryDate } from "../../lib/date";
-import type { SentimentVariant } from "../../lib/sentiment";
-import { getSentimentVariant } from "../../lib/sentiment";
+import type { CardVariant } from "../../lib/date";
+import { formatEntryDate, getTimeOfDayVariant } from "../../lib/date";
 import AnalysisStatusBadge from "../atoms/AnalysisStatusBadge";
 import IconButton from "../atoms/IconButton";
 import SentimentBadge from "../atoms/SentimentBadge";
@@ -24,7 +23,7 @@ import {
   topRow,
 } from "./entryCard.css";
 
-const CARD_CLASS: Record<SentimentVariant, string> = {
+const CARD_CLASS: Record<CardVariant, string> = {
   default: card,
   warm: cardWarm,
   amber: cardAmber,
@@ -49,9 +48,8 @@ export default function EntryCard({
   onDelete,
   onRetryAnalysis,
 }: Readonly<EntryCardProps>) {
-  const isDone = entry.analysisStatus === "done";
   const sentiment = entry.sentiment ?? 0.5;
-  const variant = isDone ? getSentimentVariant(sentiment) : "default";
+  const variant = getTimeOfDayVariant(entry.date);
   const isDark = variant === "dark";
 
   return (
