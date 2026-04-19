@@ -20,8 +20,8 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Chronicle",
-        short_name: "Chronicle",
+        name: "chronicle",
+        short_name: "chronicle",
         icons: [
           {
             src: "favicon.svg",
